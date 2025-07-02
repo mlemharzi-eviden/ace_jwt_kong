@@ -11,7 +11,7 @@ COPY nimbus-jose-jwt-10.3.jar .
 
 
 # Compiler le fichier Java avec toutes les dépendances
-RUN javac -cp ".:nimbus-jose-jwt-10.3.jar:json-smart-2.5.0.jar:accessors-smart-2.4.8.jar" JwtAuthServer.java
+RUN javac -cp ".:nimbus-jose-jwt-10.3.jar" JwtAuthServer.java
 
 # Démarrer l'application
-CMD ["java", "-cp", ".:nimbus-jose-jwt-10.3.jar:json-smart-2.5.0.jar:accessors-smart-2.4.8.jar", "JwtAuthServer"]
+CMD ["java", "-cp", ".:nimbus-jose-jwt-10.3.jar", "JwtAuthServer"]
