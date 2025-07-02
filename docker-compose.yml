@@ -1,0 +1,50 @@
+version: "3.9"
+
+services:
+  kong-db:
+    image: postgres:14
+    container_name: kong-db
+    environment:
+      POSTGRES_USER: kong
+      POSTGRES_DB: kong
+      POSTGRES_PASSWORD: kong
+    volumes:
+      - kong_db_data:/var/lib/postgresql/data
+    networks:
+      - kong-net
+
+  kong:
+    image: kong:3.4
+    container_name: kong
+    depends_on:
+      - kong-db
+    ports:
+      - "8000:8000"  # Proxy
+      - "8001:8001"  # Admin API
+      - "8002:8002"  # Kong Manager UI
+    environment:
+      KONG_DATABASE: postgres
+      KONG_PG_HOST: kong-db
+      KONG_PG_DATABASE: kong
+      KONG_PG_USER: kong
+      KONG_PG_PASSWORD: kong
+      KONG_ADMIN_LISTEN: 0.0.0.0:8001, 0.0.0.0:8444 ssl
+      KONG_ADMIN_GUI_LISTEN: 0.0.0.0:8002
+    networks:
+      - kong-net
+
+  jwt-auth:
+    build: ./jwt-auth-server
+    container_name: jwt-auth
+    ports:
+      - "8080:8080"
+    networks:
+      - kong-net
+
+
+networks:
+  kong-net:
+    driver: bridge
+
+volumes:
+  kong_db_data:
